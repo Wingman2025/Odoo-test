@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+.venv/
+venv/
+
+# FastAPI
+instance/
+
+# Node/JS
+node_modules/
+dist/
+build/
+
+# Railway
+/.railway/
+
+# Otros
+.DS_Store
+.env
+*.sqlite3

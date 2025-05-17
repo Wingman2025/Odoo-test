@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Chatbot Widget</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        h1 {
+            color: #333;
+        }
+        .content {
+            text-align: center;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+    </style>
+    <!-- Importa el Web Component -->
+    <script src="chatbot-widget.js" type="module"></script>
+</head>
+<body>
+    <div class="content">
+        <h1>Bienvenido a la Página de Prueba del Chatbot</h1>
+        <p>Esta página demuestra el uso del Web Component para el chatbot.</p>
+        <p>Busca la burbuja de chat en la esquina inferior derecha de la pantalla y haz clic en ella para comenzar.</p>
+    </div>
+
+    <!-- Usa el Web Component -->
+    <!-- Puedes configurar la URL del backend si es diferente a la predeterminada -->
+    <chatbot-widget backend-url="http://127.0.0.1:8001/chat"></chatbot-widget>
+
+</body>
+</html>
