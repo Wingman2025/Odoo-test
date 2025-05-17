@@ -21,38 +21,47 @@ class ChatbotWidget extends HTMLElement {
 
         this.shadowRoot.innerHTML = `
             <style>
+                /* Fuente y colores MagicWave */
+                @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
                 :host {
                     position: fixed;
-                    bottom: 20px;
-                    right: 20px;
+                    bottom: 24px;
+                    right: 24px;
                     z-index: 1000;
-                    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                    font-family: 'Montserrat', system-ui, sans-serif;
                 }
+                /* Burbuja del chat (MagicWave look) */
                 .chat-button {
-                    background-color: #007bff;
-                    color: white;
+                    background: linear-gradient(135deg, #00aaff 60%, #0099dd 100%);
+                    color: #fff;
                     border: none;
                     border-radius: 50%;
-                    width: 60px;
-                    height: 60px;
-                    font-size: 28px;
+                    width: 62px;
+                    height: 62px;
+                    font-size: 32px;
                     cursor: pointer;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                    box-shadow: 0 6px 16px rgba(0,170,255,0.25);
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    transition: box-shadow 0.2s, background 0.2s;
                 }
+                .chat-button:hover {
+                    box-shadow: 0 8px 24px rgba(0,170,255,0.35);
+                    background: linear-gradient(135deg, #0099dd 60%, #00aaff 100%);
+                }
+                /* Contenedor principal del chat */
                 .chatbot-container {
-                    width: 360px;
-                    height: 500px;
-                    background-color: #fff;
-                    border-radius: 10px;
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                    width: 370px;
+                    height: 520px;
+                    background: #fff;
+                    border-radius: 18px;
+                    box-shadow: 0 8px 32px rgba(0,170,255,0.12);
                     display: flex;
                     flex-direction: column;
                     overflow: hidden;
-                    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-                    transform: scale(0.95) translateY(10px);
+                    transition: transform 0.3s, opacity 0.3s;
+                    transform: scale(0.97) translateY(10px);
                     opacity: 0;
                     visibility: hidden;
                 }
@@ -61,74 +70,104 @@ class ChatbotWidget extends HTMLElement {
                     opacity: 1;
                     visibility: visible;
                 }
+                /* Cabecera MagicWave */
                 .chatbot-header {
-                    background-color: #007bff;
+                    background: linear-gradient(90deg, #00aaff 70%, #0099dd 100%);
                     color: white;
-                    padding: 15px;
+                    padding: 16px 18px;
                     font-size: 1.1em;
                     font-weight: bold;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    border-top-left-radius: 18px;
+                    border-top-right-radius: 18px;
+                    box-shadow: 0 2px 8px rgba(0,170,255,0.10);
+                }
+                .header-logo {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                .header-logo svg {
+                    height: 28px;
+                    width: 90px;
                 }
                 .close-button {
                     background: none;
                     border: none;
                     color: white;
-                    font-size: 1.5em;
+                    font-size: 1.7em;
                     cursor: pointer;
+                    opacity: 0.8;
+                    transition: opacity 0.2s;
                 }
+                .close-button:hover {
+                    opacity: 1;
+                }
+                /* Mensajes */
                 .chatbot-messages {
                     flex-grow: 1;
-                    padding: 15px;
+                    padding: 18px 14px;
                     overflow-y: auto;
-                    background-color: #f7f7f7;
+                    background: #f6fafd;
                 }
                 .message {
-                    margin-bottom: 10px;
-                    padding: 10px 12px;
-                    border-radius: 18px;
+                    margin-bottom: 12px;
+                    padding: 12px 16px;
+                    border-radius: 20px;
                     max-width: 80%;
-                    line-height: 1.4;
+                    line-height: 1.5;
+                    font-size: 1em;
+                    word-break: break-word;
                 }
                 .message.user {
-                    background-color: #007bff;
+                    background: linear-gradient(135deg, #00aaff 70%, #0099dd 100%);
                     color: white;
                     align-self: flex-end;
-                    margin-left: auto; /* Alinea a la derecha */
+                    margin-left: auto;
+                    border-bottom-right-radius: 8px;
                 }
                 .message.agent {
-                    background-color: #e9ecef;
-                    color: #333;
+                    background: #e9f7fd;
+                    color: #222;
                     align-self: flex-start;
+                    border-bottom-left-radius: 8px;
                 }
+                /* Área de entrada */
                 .chatbot-input-area {
                     display: flex;
-                    padding: 10px;
-                    border-top: 1px solid #ddd;
-                    background-color: #fff;
+                    padding: 12px 14px;
+                    border-top: 1px solid #e0e9ef;
+                    background: #fff;
                 }
                 .chatbot-input {
                     flex-grow: 1;
-                    border: 1px solid #ccc;
-                    border-radius: 20px;
-                    padding: 10px 15px;
+                    border: 1.5px solid #00aaff;
+                    border-radius: 22px;
+                    padding: 12px 16px;
                     font-size: 1em;
-                    margin-right: 8px;
+                    margin-right: 10px;
                     outline: none;
+                    background: #fafdff;
+                    transition: border 0.2s;
+                }
+                .chatbot-input:focus {
+                    border-color: #0099dd;
                 }
                 .chatbot-send-button {
-                    background-color: #007bff;
+                    background: linear-gradient(135deg, #00aaff 70%, #0099dd 100%);
                     color: white;
                     border: none;
-                    border-radius: 20px;
-                    padding: 10px 20px;
+                    border-radius: 22px;
+                    padding: 10px 22px;
                     font-size: 1em;
                     cursor: pointer;
-                    transition: background-color 0.2s;
+                    font-weight: 600;
+                    transition: background 0.2s;
                 }
                 .chatbot-send-button:hover {
-                    background-color: #0056b3;
+                    background: linear-gradient(135deg, #0099dd 70%, #00aaff 100%);
                 }
             </style>
             
