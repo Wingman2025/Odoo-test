@@ -58,14 +58,23 @@ my-ai-chatbot-project/
     ```
 3. Abre `http://localhost:8000` en tu navegador.
 
-## Despliegue en Railway
+## Despliegue profesional en Railway
 
-1. Sube el código a Railway.
-2. Configura las variables de entorno en Railway Dashboard.
-3. Railway instalará automáticamente las dependencias de `requirements.txt`.
-4. Usa el comando de inicio:
+### Backend (API)
+1. Crea un nuevo servicio en Railway y selecciona la carpeta `backend` como Working Directory.
+2. Configura todas las variables de entorno necesarias desde `backend/.env.example`.
+3. Usa el comando de inicio:
     ```
     uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    ```
+4. El backend solo expone endpoints de API (no sirve archivos estáticos ni HTML).
+
+### Frontend (Static Site)
+1. Crea un nuevo proyecto Static Site en Railway (o en Vercel/Netlify) y selecciona `frontend/public` como raíz.
+2. Railway servirá automáticamente tu `index.html` y `chatbot-widget.js`.
+3. En tu `index.html`, configura el widget para apuntar a la URL pública del backend:
+    ```html
+    <chatbot-widget backend-url="https://TU_BACKEND_RAILWAY_URL/chat"></chatbot-widget>
     ```
 
 ---

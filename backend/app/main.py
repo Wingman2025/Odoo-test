@@ -39,9 +39,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Montar frontend/public como archivos estáticos en la raíz
-static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../frontend/public'))
-app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
 @app.get("/ping")
 def ping():
