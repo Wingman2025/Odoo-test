@@ -178,7 +178,8 @@ class ChatbotWidget extends HTMLElement {
                         <img src="Magicwave.jpg" alt="MagicWave" style="height:28px;width:auto;max-width:110px;object-fit:contain;vertical-align:middle;" />
                         <span style="font-weight:700;font-size:1.08em;letter-spacing:0.5px;">Assistant</span>
                     </span>
-                    <button class="close-button" title="Cerrar">&times;</button>
+                    <!-- Se agrega id 'close-chat' para que el selector JS funcione correctamente -->
+<button class="close-button" id="close-chat" title="Cerrar">&times;</button>
                 </div>
                 <div class="chatbot-messages" id="messages-area"></div>
                 <div class="chatbot-input-area">
