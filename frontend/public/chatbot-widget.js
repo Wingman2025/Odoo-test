@@ -175,7 +175,7 @@ class ChatbotWidget extends HTMLElement {
                 <div class="chatbot-header">
                     <!-- Logo MagicWave en la cabecera del chat -->
                     <span class="header-logo" style="display:flex;align-items:center;gap:10px;">
-                        <img src="logo-magicwave.png" alt="MagicWave" style="height:28px;width:auto;max-width:110px;object-fit:contain;vertical-align:middle;" />
+                        <img src="Magicwave.jpg" alt="MagicWave" style="height:28px;width:auto;max-width:110px;object-fit:contain;vertical-align:middle;" />
                         <span style="font-weight:700;font-size:1.08em;letter-spacing:0.5px;">Assistant</span>
                     </span>
                     <button class="close-button" title="Cerrar">&times;</button>
