@@ -42,9 +42,14 @@
         <p>Busca la burbuja de chat en la esquina inferior derecha de la pantalla y haz clic en ella para comenzar.</p>
     </div>
 
-    <!-- Usa el Web Component -->
-    <!-- Puedes configurar la URL del backend si es diferente a la predeterminada -->
+    <!-- Usa el Web Component en producción -->
+    <!-- Cambia el backend-url por la URL pública de tu backend en Railway -->
+    <chatbot-widget backend-url="https://odoo-test-production.up.railway.app/chat"></chatbot-widget>
+
+    <!--
+    Ejemplo para desarrollo local:
     <chatbot-widget backend-url="http://127.0.0.1:8001/chat"></chatbot-widget>
+    -->
 
 </body>
 </html>
