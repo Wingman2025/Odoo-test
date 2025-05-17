@@ -35,66 +35,30 @@
     <!-- Importa el Web Component -->
     <script src="chatbot-widget.js" type="module"></script>
 </head>
-<body style="margin:0;padding:0;font-family:'Montserrat',Arial,sans-serif;background:#f6fafd;">
-    <!-- Barra superior MagicWave -->
-    <header style="background:#111;padding:0;">
-        <div style="display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:8px 24px;">
-            <!-- Logo MagicWave SVG -->
-            <div style="display:flex;align-items:center;gap:10px;">
-                <svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <text x="0" y="24" font-family="Montserrat,Arial,sans-serif" font-size="28" font-weight="bold" fill="#00aaff">magicwave</text>
-                </svg>
-            </div>
-            <!-- Barra de búsqueda -->
-            <form style="flex:1;max-width:430px;margin:0 24px;display:flex;">
-                <input type="search" placeholder="Buscar..." style="flex:1;padding:9px 16px;border-radius:22px 0 0 22px;border:1.5px solid #00aaff;font-size:1em;outline:none;">
-                <button type="submit" style="background:#00aaff;border:none;color:#fff;padding:0 18px;border-radius:0 22px 22px 0;font-size:1.2em;cursor:pointer;">🔍</button>
-            </form>
-            <!-- Menú superior -->
-            <nav style="display:flex;gap:22px;align-items:center;">
-                <a href="#" style="color:#fff;text-decoration:none;font-weight:500;font-size:1em;">Nuestro Blog</a>
-                <a href="#" style="color:#fff;text-decoration:none;font-weight:500;font-size:1em;display:flex;align-items:center;gap:5px;">
-                    <span style="background:#00aaff;padding:7px 12px;border-radius:18px;font-size:0.95em;">🛒 My Cart</span>
-                </a>
-            </nav>
+<body style="margin:0;padding:0;background:#fff;font-family:'Montserrat',Arial,sans-serif;min-height:100vh;">
+    <main style="max-width:500px;margin:0 auto;padding:32px 16px 80px 16px;display:flex;flex-direction:column;align-items:center;">
+        <h1 style="font-size:2em;font-weight:700;color:#222;margin-bottom:12px;text-align:center;">Prototipo Chatbot AI<br>MagicWave + Odoo</h1>
+        <p style="font-size:1.12em;color:#444;margin-bottom:24px;text-align:center;max-width:400px;">
+            Esta es una demo sencilla y mobile-first del agente AI conectado al ERP Odoo para la tienda MagicWave. Usa el chat para consultar productos, inventario y más.
+        </p>
+        <div style="width:100%;max-width:400px;margin:0 auto 24px auto;">
+            <ul style="padding-left:20px;color:#666;font-size:1em;line-height:1.6;">
+                <li>100% responsive y fácil de leer en móviles</li>
+                <li>Sin colores fuertes ni imágenes de fondo</li>
+                <li>Ideal para pruebas y prototipos rápidos</li>
+            </ul>
         </div>
-        <!-- Menú de navegación principal -->
-        <div style="background:#111;">
-            <nav style="display:flex;justify-content:center;gap:30px;padding:8px 0;">
-                <a href="#" style="color:#fff;text-decoration:none;font-size:1em;">KITESURF</a>
-                <a href="#" style="color:#fff;text-decoration:none;font-size:1em;">WINDSURF</a>
-                <a href="#" style="color:#fff;text-decoration:none;font-size:1em;">SUP y SURF</a>
-                <a href="#" style="color:#fff;text-decoration:none;font-size:1em;">WING Y FOIL</a>
-                <a href="#" style="color:#fff;text-decoration:none;font-size:1em;">WATERWEAR</a>
-                <a href="#" style="color:#fff;text-decoration:none;font-size:1em;">TEXTIL</a>
-                <a href="#" style="color:#fff;text-decoration:none;font-size:1em;">OUTLET</a>
-                <a href="#" style="color:#fff;text-decoration:none;font-size:1em;">Registrarse</a>
-            </nav>
+        <div style="margin:32px 0 0 0;text-align:center;color:#aaa;font-size:0.95em;">
+            &copy; MagicWave · Demo AI ERP Odoo
         </div>
-    </header>
+    </main>
 
-    <!-- Hero principal MagicWave -->
-    <section style="position:relative;max-width:1200px;margin:36px auto 0 auto;border-radius:18px;overflow:hidden;box-shadow:0 8px 32px rgba(0,170,255,0.09);background:#fff;">
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" alt="Wingfoil" style="width:100%;height:340px;object-fit:cover;object-position:center;filter:brightness(0.92);">
-        <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:48px 56px;">
-            <h1 style="font-size:2.8em;font-weight:800;color:#111;margin:0 0 10px 0;letter-spacing:-2px;text-shadow:0 2px 8px #fff9;">CABRINHA<br>2025</h1>
-            <span style="font-size:1.4em;color:#00aaff;font-weight:600;text-shadow:0 2px 8px #fff9;">¡Descubre la nueva colección!</span>
-            <div style="margin-top:32px;padding:16px 26px;background:rgba(0,170,255,0.09);border-radius:14px;box-shadow:0 2px 8px #00aaff22;max-width:520px;">
-                <strong style="color:#00aaff;font-size:1.1em;">DEMO:</strong>
-                <span style="color:#222;font-size:1.05em;">Esta es una prueba del agente AI conectado al ERP Odoo para la tienda MagicWave. Interactúa con el chatbot para consultar productos, inventario y más.</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Demo del widget de chat -->
-    <!-- Usa el Web Component en producción -->
-    <!-- Cambia el backend-url por la URL pública de tu backend en Railway -->
+    <!-- Chatbot Web Component -->
     <chatbot-widget backend-url="https://odoo-test-production.up.railway.app/chat"></chatbot-widget>
 
     <!--
     Ejemplo para desarrollo local:
     <chatbot-widget backend-url="http://127.0.0.1:8001/chat"></chatbot-widget>
     -->
-
 </body>
 </html>
