@@ -173,8 +173,12 @@ class ChatbotWidget extends HTMLElement {
             
             <div class="chatbot-container" id="chatbot-container">
                 <div class="chatbot-header">
-                    <span>Wingfoil Assistant</span>
-                    <button class="close-button" id="close-chat">×</button>
+                    <!-- Logo MagicWave en la cabecera del chat -->
+                    <span class="header-logo" style="display:flex;align-items:center;gap:10px;">
+                        <img src="logo-magicwave.png" alt="MagicWave" style="height:28px;width:auto;max-width:110px;object-fit:contain;vertical-align:middle;" />
+                        <span style="font-weight:700;font-size:1.08em;letter-spacing:0.5px;">Assistant</span>
+                    </span>
+                    <button class="close-button" title="Cerrar">&times;</button>
                 </div>
                 <div class="chatbot-messages" id="messages-area"></div>
                 <div class="chatbot-input-area">
