@@ -8,6 +8,8 @@ Incluye rutas para el widget del chatbot y la integración con Odoo y OpenAI.
 
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from pydantic import BaseModel
 from typing import List, Optional
 from .odoo_client import get_productos, get_inventario
@@ -36,6 +38,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Montar frontend/public como archivos estáticos en la raíz
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../frontend/public'))
+app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
 @app.get("/ping")
 def ping():
