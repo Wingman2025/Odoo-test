@@ -175,7 +175,7 @@ class ChatbotWidget extends HTMLElement {
                 <div class="chatbot-header">
                     <!-- Logo MagicWave en la cabecera del chat -->
                     <span class="header-logo" style="display:flex;align-items:center;gap:10px;">
-                        <img src="Magicwave.jpg" alt="MagicWave" style="height:28px;width:auto;max-width:110px;object-fit:contain;vertical-align:middle;" />
+                        <img src="logosolo.png" alt="Logo" style="height:28px;width:auto;max-width:110px;object-fit:contain;vertical-align:middle;" />
                         <span style="font-weight:700;font-size:1.08em;letter-spacing:0.5px;">Assistant</span>
                     </span>
                     <!-- Se agrega id 'close-chat' para que el selector JS funcione correctamente -->
@@ -187,7 +187,9 @@ class ChatbotWidget extends HTMLElement {
                     <button id="send-button" class="chatbot-send-button">Enviar</button>
                 </div>
             </div>
-            <button class="chat-button" id="toggle-chat">💬</button>
+            <button class="chat-button" id="toggle-chat" style="background: transparent; box-shadow: none; overflow: hidden; padding: 0;">
+                <img src="logosolo.png" alt="Chat" style="width: 100%; height: 100%; object-fit: contain; padding: 10px;">
+            </button>
         `;
     }
 
