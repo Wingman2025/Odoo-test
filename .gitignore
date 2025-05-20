@@ -22,3 +22,7 @@ build/
 .DS_Store
 .env
 *.sqlite3
+backend/app/odoo_explorer.py
+body.json
+backend/scriptsodoo
+
