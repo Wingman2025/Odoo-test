@@ -43,8 +43,15 @@ def rpc_call(method, params):
 
 # Función para obtener productos
 
-def get_productos():
-    """Devuelve los primeros 10 productos de Odoo"""
+def get_productos(domain=None, limit=None):
+    """
+    Devuelve los productos de Odoo según el dominio y límite especificados.
+    Incluye campos clave: nombre, tipo, precio y código.
+
+    Parámetros:
+        domain (list, opcional): Filtros de búsqueda Odoo (por defecto, todos los productos).
+        limit (int, opcional): Máximo de productos a devolver (por defecto, sin límite).
+    """
     # Login
     auth = rpc_call("call", {
         "service": "common",
@@ -55,10 +62,15 @@ def get_productos():
     if not isinstance(uid, int):
         return {"error": "No se pudo autenticar en Odoo"}
     # Buscar productos
+    if domain is None:
+        domain = []
+    args = [DB, uid, KEY, "product.template", "search", domain]
+    if limit is not None:
+        args += [0, limit]
     prod_ids = rpc_call("call", {
         "service": "object",
         "method": "execute",
-        "args": [DB, uid, KEY, "product.template", "search", [], 0, 10]
+        "args": args
     })
     pids = prod_ids.get("result", [])
     if not pids or not isinstance(pids, list):
@@ -70,10 +82,129 @@ def get_productos():
     })
     return products.get("result", [])
 
+# Función para obtener pedidos de compra
+
+def get_pedidos_compra(domain=None, limit=None):
+    """
+    Devuelve los pedidos de compra (purchase.order) de Odoo según el dominio y límite especificados.
+    Incluye campos clave: número, proveedor, fecha de pedido y estado.
+
+    Parámetros:
+        domain (list, opcional): Filtros de búsqueda Odoo (por defecto, todos los pedidos).
+        limit (int, opcional): Máximo de pedidos a devolver (por defecto, sin límite).
+    """
+    # Login
+    auth = rpc_call("call", {
+        "service": "common",
+        "method": "login",
+        "args": [DB, USER, KEY]
+    })
+    uid = auth.get("result")
+    if not isinstance(uid, int):
+        return {"error": "No se pudo autenticar en Odoo"}
+    # Buscar pedidos de compra
+    if domain is None:
+        domain = []
+    args = [DB, uid, KEY, "purchase.order", "search", domain]
+    if limit is not None:
+        args += [0, limit]
+    po_ids = rpc_call("call", {
+        "service": "object",
+        "method": "execute",
+        "args": args
+    })
+    ids = po_ids.get("result", [])
+    if not ids or not isinstance(ids, list):
+        return {"error": "No se encontraron pedidos de compra"}
+    # Leer campos relevantes
+    pedidos = rpc_call("call", {
+        "service": "object",
+        "method": "execute",
+        "args": [DB, uid, KEY, "purchase.order", "read", ids, ["name", "partner_id", "date_order", "state"]]
+    })
+    return pedidos.get("result", [])
+
+# Función para obtener líneas de un pedido de compra
+
+def get_lineas_pedido(order_id, uid=None):
+    """
+    Devuelve las líneas de un pedido de compra, incluyendo producto, cantidad y almacén destino.
+    """
+    # Login solo si no se proporciona uid
+    if uid is None:
+        auth = rpc_call("call", {
+            "service": "common",
+            "method": "login",
+            "args": [DB, USER, KEY]
+        })
+        uid = auth.get("result")
+        if not isinstance(uid, int):
+            return {"error": "No se pudo autenticar en Odoo"}
+    # Buscar líneas del pedido
+    lineas = rpc_call("call", {
+        "service": "object",
+        "method": "execute",
+        "args": [DB, uid, KEY, "purchase.order.line", "search_read", [["order_id", "=", order_id]], ["product_id", "product_qty", "product_uom", "date_planned", "location_dest_id"]]
+    })
+    return lineas.get("result", [])
+
+# Función extendida para obtener pedidos de compra con líneas anidadas
+
+def get_pedidos_compra_detallado(domain=None, limit=None):
+    """
+    Devuelve los pedidos de compra de Odoo, cada uno con sus líneas (productos, cantidades, almacén destino).
+
+    Parámetros:
+        domain (list, opcional): Filtros de búsqueda Odoo (por defecto, todos los pedidos).
+        limit (int, opcional): Máximo de pedidos a devolver (por defecto, sin límite).
+    """
+    # Login
+    auth = rpc_call("call", {
+        "service": "common",
+        "method": "login",
+        "args": [DB, USER, KEY]
+    })
+    uid = auth.get("result")
+    if not isinstance(uid, int):
+        return {"error": "No se pudo autenticar en Odoo"}
+    # Buscar pedidos de compra
+    if domain is None:
+        domain = []
+    args = [DB, uid, KEY, "purchase.order", "search", domain]
+    if limit is not None:
+        args += [0, limit]
+    po_ids = rpc_call("call", {
+        "service": "object",
+        "method": "execute",
+        "args": args
+    })
+    ids = po_ids.get("result", [])
+    if not ids or not isinstance(ids, list):
+        return {"error": "No se encontraron pedidos de compra"}
+    # Leer campos relevantes
+    pedidos = rpc_call("call", {
+        "service": "object",
+        "method": "execute",
+        "args": [DB, uid, KEY, "purchase.order", "read", ids, ["name", "partner_id", "date_order", "state"]]
+    })
+    pedidos_list = pedidos.get("result", [])
+    # Para cada pedido, obtener sus líneas
+    for pedido in pedidos_list:
+        pedido_id = pedido["id"]
+        pedido["lineas"] = get_lineas_pedido(pedido_id, uid=uid)
+    return pedidos_list
+
 # Función para obtener inventario
 
-def get_inventario():
-    """Devuelve los primeros 10 registros de inventario de Odoo"""
+def get_inventario(domain=None, limit=None):
+    """
+    Devuelve los registros de inventario de Odoo según el dominio y límite especificados.
+    Incluye campos clave: producto, cantidad y ubicación.
+
+    Parámetros:
+        domain (list, opcional): Filtros de búsqueda Odoo (por defecto, todo el inventario).
+        limit (int, opcional): Máximo de registros a devolver (por defecto, sin límite).
+    """
     # Login
     auth = rpc_call("call", {
         "service": "common",
@@ -84,10 +215,15 @@ def get_inventario():
     if not isinstance(uid, int):
         return {"error": "No se pudo autenticar en Odoo"}
     # Buscar inventarios
+    if domain is None:
+        domain = []
+    args = [DB, uid, KEY, "stock.quant", "search", domain]
+    if limit is not None:
+        args += [0, limit]
     inv_ids = rpc_call("call", {
         "service": "object",
         "method": "execute",
-        "args": [DB, uid, KEY, "stock.quant", "search", [], 0, 10]
+        "args": args
     })
     iids = inv_ids.get("result", [])
     if not iids or not isinstance(iids, list):

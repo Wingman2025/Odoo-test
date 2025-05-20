@@ -19,7 +19,13 @@ api_key = os.getenv("OPENAI_API_KEY")
 openai_client = OpenAI(api_key=api_key)
 
 # --- Definir el agente CRM, instrucciones consultivas y breves ---
-from .ai_agent_tools import obtener_productos_odoo, obtener_inventario_odoo
+from .ai_agent_tools import (
+    obtener_productos_odoo,
+    obtener_inventario_odoo,
+    obtener_pedidos_compra_odoo,
+    obtener_pedidos_compra_detallado_odoo,
+    obtener_lineas_pedido_odoo
+)
 
 crm_agent = Agent(
     name="crm_agent",
@@ -78,7 +84,13 @@ Eres un agente de gestión interna para una tienda de deportes acuáticos. Tu fu
 - Responde siempre con precisión y brevedad, orientado a resolver la gestión interna.
 """,
     model="gpt-4o",
-    tools=[obtener_productos_odoo, obtener_inventario_odoo]
+    tools=[
+        obtener_productos_odoo,
+        obtener_inventario_odoo,
+        obtener_pedidos_compra_odoo,
+        obtener_pedidos_compra_detallado_odoo,
+        obtener_lineas_pedido_odoo
+    ]
 )
 
 async def run_internal_ops_agent(history_context: str) -> str:
@@ -104,7 +116,10 @@ async def run_internal_ops_agent(history_context: str) -> str:
 triage_agent = Agent(
     name="triage_agent",
     instructions="""
-Eres un agente de triage. Tu tarea es analizar la consulta del usuario y decidir si debe ser gestionada por el agente CRM (consultas comerciales o de clientes) o por el agente de gestión interna (consultas sobre stock, inventario o pedidos internos). Si la consulta está relacionada con stock, inventario, almacén o pedidos, deriva al agente "internal_ops_agent". Si es una consulta comercial, de ventas o atención al cliente, deriva al agente "crm_agent".
+eres un agente de triage. tu tarea es derivar las consultas al agente adecuado.
+despues de saludar, Pregunta si quiere ser atendido por un agente comercial y si es asi deriva al agente "crm_agent". o si quiere ser atendido por una gente adminstrativo y deriva al agente "internal_ops_agent". 
+si las preguntas son comerciales, de ventas o atención al cliente, deriva al agente "crm_agent".
+Si las preguntas son sobre stock, inventario, almacén o pedidos, deriva al agente "internal_ops_agent".
 """,
     handoffs=[internal_ops_agent, crm_agent],
     model="gpt-4o"

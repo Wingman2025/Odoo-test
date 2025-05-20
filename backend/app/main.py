@@ -12,7 +12,9 @@ from fastapi.staticfiles import StaticFiles
 import os
 from pydantic import BaseModel
 from typing import List, Optional
-from .odoo_client import get_productos, get_inventario
+from .odoo_client import (
+    get_productos, get_inventario, get_pedidos_compra, get_pedidos_compra_detallado, get_lineas_pedido
+)
 from .ai_agent import run_crm_agent, run_triage_agent
 
 app = FastAPI(
@@ -90,24 +92,50 @@ async def chat_endpoint(chat_request: ChatRequest):
     return {"response": response}
 
 
-@app.get("/productos")
-def productos():
-    """
-    Devuelve una lista de los primeros 10 productos disponibles en Odoo.
-    Útil para paneles internos, administración o integraciones.
+from fastapi import Query
+import json
 
-    Returns:
-        list: Lista de productos con campos relevantes (name, type, list_price, default_code).
+@app.get("/productos")
+def productos(domain: str = Query(None, description="Filtro Odoo en formato JSON"), limit: int = Query(None, description="Máximo de productos a devolver")):
     """
-    return get_productos()
+    Devuelve productos de Odoo según filtros y límite opcionales.
+    Permite filtrar y limitar resultados vía query params.
+    Ejemplo: /productos?domain=[["type","=","consu"]]&limit=5
+    """
+    parsed_domain = json.loads(domain) if domain else None
+    return get_productos(domain=parsed_domain, limit=limit)
 
 @app.get("/inventario")
-def inventario():
+def inventario(domain: str = Query(None, description="Filtro Odoo en formato JSON"), limit: int = Query(None, description="Máximo de registros a devolver")):
     """
-    Devuelve una lista de los primeros 10 registros de inventario desde Odoo.
-    Útil para paneles internos, administración o integraciones.
+    Devuelve registros de inventario según filtros y límite opcionales.
+    Ejemplo: /inventario?domain=[["product_id","=",123]]&limit=10
+    """
+    parsed_domain = json.loads(domain) if domain else None
+    return get_inventario(domain=parsed_domain, limit=limit)
 
-    Returns:
-        list: Lista de registros de inventario (product_id, quantity, location_id).
+@app.get("/pedidos_compra")
+def pedidos_compra(domain: str = Query(None, description="Filtro Odoo en formato JSON"), limit: int = Query(None, description="Máximo de pedidos a devolver")):
     """
-    return get_inventario()
+    Devuelve pedidos de compra según filtros y límite opcionales.
+    Ejemplo: /pedidos_compra?domain=[["state","=","purchase"]]&limit=5
+    """
+    parsed_domain = json.loads(domain) if domain else None
+    return get_pedidos_compra(domain=parsed_domain, limit=limit)
+
+@app.get("/pedidos_compra_detallado")
+def pedidos_compra_detallado(domain: str = Query(None, description="Filtro Odoo en formato JSON"), limit: int = Query(None, description="Máximo de pedidos a devolver")):
+    """
+    Devuelve pedidos de compra con líneas anidadas, según filtros y límite opcionales.
+    Ejemplo: /pedidos_compra_detallado?limit=3
+    """
+    parsed_domain = json.loads(domain) if domain else None
+    return get_pedidos_compra_detallado(domain=parsed_domain, limit=limit)
+
+@app.get("/lineas_pedido/{order_id}")
+def lineas_pedido(order_id: int):
+    """
+    Devuelve las líneas de un pedido de compra específico.
+    Ejemplo: /lineas_pedido/123
+    """
+    return get_lineas_pedido(order_id)
