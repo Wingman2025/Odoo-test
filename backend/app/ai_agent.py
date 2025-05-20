@@ -1,22 +1,49 @@
 """
 ai_agent.py - Agente CRM modular para FastAPI
-Versión: 0.3.0
+Versión: 0.4.0
 
 Este módulo define los agentes usando openai-agents, siguiendo las mejores prácticas de modularidad y comentarios profesionales.
-No incluye endpoints FastAPI: solo lógica de agente y función para invocarlo desde el backend principal.
+Incluye guardrails para detección de lenguaje inapropiado.
 """
 
 from dotenv import load_dotenv
 from openai import OpenAI
-from agents import Agent, Runner
+from agents import Agent, Runner, GuardrailFunctionOutput, input_guardrail, InputGuardrailTripwireTriggered
 import os
+from typing import Union, List, Dict, Any
 
 # --- Cargar variables de entorno (.env) ---
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-# --- Crear cliente OpenAI (por si se requiere en el futuro) ---
+# --- Crear cliente OpenAI ---
 openai_client = OpenAI(api_key=api_key)
+
+# --- Guardrail para lenguaje inapropiado ---
+@input_guardrail
+async def profanity_guardrail(ctx, agent: Agent, user_input: Union[str, List[Dict[str, Any]]]) -> GuardrailFunctionOutput:
+    """
+    Guardrail que utiliza la Moderation API de OpenAI para detectar lenguaje inapropiado.
+    Dispara un tripwire si se detecta contenido inapropiado.
+    """
+    # Asegurarse de que user_input sea un string
+    if isinstance(user_input, list):
+        # Si es una lista de mensajes, tomar el último mensaje del usuario
+        user_message = next((
+            msg["content"] for msg in reversed(user_input) 
+            if isinstance(msg, dict) and msg.get("role") == "user"
+        ), "")
+    else:
+        user_message = str(user_input)
+    
+    # Llamada a la Moderation API
+    mod = await openai_client.moderations.create(input=user_message)
+    
+    # Si flagged es True, dispara el tripwire
+    return GuardrailFunctionOutput(
+        output_info=mod.model_dump(),
+        tripwire_triggered=mod.results[0].flagged
+    )
 
 # --- Definir el agente CRM, instrucciones consultivas y breves ---
 from .ai_agent_tools import (
@@ -43,7 +70,8 @@ Eres un agente comercial experto en deportes acuáticos, especializado en wingfo
 Nunca inventes información sobre productos que no existen en la tienda. Si no tienes datos suficientes, pide detalles o sugiere consultar con un asesor humano.
 """,
     model="gpt-4o",
-    tools=[obtener_productos_odoo, obtener_inventario_odoo]
+    tools=[obtener_productos_odoo, obtener_inventario_odoo],
+    input_guardrails=[profanity_guardrail]
 )
 
 
@@ -90,7 +118,8 @@ Eres un agente de gestión interna para una tienda de deportes acuáticos. Tu fu
         obtener_pedidos_compra_odoo,
         obtener_pedidos_compra_detallado_odoo,
         obtener_lineas_pedido_odoo
-    ]
+    ],
+    input_guardrails=[profanity_guardrail]
 )
 
 async def run_internal_ops_agent(history_context: str) -> str:

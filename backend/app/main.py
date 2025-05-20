@@ -11,7 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Union, Dict, Any
+from agents import InputGuardrailTripwireTriggered  # Importar la excepción del guardrail
 from .odoo_client import (
     get_productos, get_inventario, get_pedidos_compra, get_pedidos_compra_detallado, get_lineas_pedido
 )
@@ -82,14 +83,27 @@ async def chat_endpoint(chat_request: ChatRequest):
     Returns:
         dict: {"response": respuesta generada por el agente adecuado}
     """
-    # Construir historial de conversación
-    history_str = "\n".join([f"{entry.role}: {entry.content}" for entry in chat_request.history])
-    history_str += f"\nuser: {chat_request.user_message}"
+    try:
+        # Construir historial de conversación
+        history_str = "\n".join([f"{entry.role}: {entry.content}" for entry in chat_request.history])
+        history_str += f"\nuser: {chat_request.user_message}"
 
-    # Invocar la función centralizada de agentes (manejo de handoff y errores en ai_agent.py)
-    from .ai_agent import run_triage_agent
-    response = await run_triage_agent(history_str)
-    return {"response": response}
+        # Invocar la función centralizada de agentes (manejo de handoff y errores en ai_agent.py)
+        from .ai_agent import run_triage_agent
+        response = await run_triage_agent(history_str)
+        return {"response": response}
+        
+    except InputGuardrailTripwireTriggered:
+        # Manejar lenguaje inapropiado detectado por el guardrail
+        return {
+            "response": "Lo siento, no puedo procesar mensajes con lenguaje inapropiado. " \
+                       "Por favor, reformula tu consulta de manera respetuosa."
+        }
+    except Exception as e:
+        # Manejar otros errores inesperados
+        return {
+            "response": f"Lo siento, ha ocurrido un error al procesar tu mensaje. {str(e)}"
+        }
 
 
 from fastapi import Query
