@@ -141,15 +141,13 @@ async def run_triage_agent(
         )
     """
     try:
-        run_config = {
-            "workflow_name": workflow_name
-        }
-        if trace_id:
-            run_config["trace_id"] = trace_id
-        if group_id:
-            run_config["group_id"] = group_id
-        if trace_metadata:
-            run_config["trace_metadata"] = trace_metadata
+        from agents import RunConfig
+        run_config = RunConfig(
+            workflow_name=workflow_name,
+            trace_id=trace_id,
+            group_id=group_id,
+            trace_metadata=trace_metadata
+        )
 
         response = await runner.run(
             triage_agent,
