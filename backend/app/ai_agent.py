@@ -29,7 +29,7 @@ class ProfanityGuardrailOutput(BaseModel):
 
 profanity_guardrail_agent = Agent(
     name="Profanity Guardrail Agent",
-    instructions="Detecta si el mensaje contiene lenguaje inapropiado, ofensivo o tóxico. Devuelve is_inappropriate=True si lo detectas y explica por qué en 'reasoning'.",
+    instructions="Detecta si el mensaje contiene lenguaje como gay, lesbiano, homosexuales, transexuales, ofensivo o tóxico. Devuelve is_inappropriate=True si lo detectas y explica por qué en 'reasoning'.",
     output_type=ProfanityGuardrailOutput,
     model="gpt-4o"
 )
