@@ -23,24 +23,27 @@ openai_client = OpenAI(api_key=api_key)
 from pydantic import BaseModel
 from agents import Runner, RunContextWrapper, TResponseInputItem
 
-class ProfanityGuardrailOutput(BaseModel):
-    is_inappropriate: bool
+class SportQuestionGuardrailOutput(BaseModel):
+    is_inappropriate: bool  # True si NO es deportiva
     reasoning: str
 
-profanity_guardrail_agent = Agent(
-    name="Profanity Guardrail Agent",
-    instructions="Detecta si el mensaje contiene lenguaje como gay, lesbiano, homosexuales, transexuales, ofensivo o tóxico. Devuelve is_inappropriate=True si lo detectas y explica por qué en 'reasoning'.",
-    output_type=ProfanityGuardrailOutput,
+sport_guardrail_agent = Agent(
+    name="Sport Question Guardrail Agent",
+    instructions=(
+        "Valida si la pregunta o mensaje del usuario está relacionada con deportes acuáticos, "
+        "wingfoil, kitesurf, surf, paddle surf, material deportivo, o temas deportivos en general. "
+        "Devuelve is_inappropriate=True si NO es una consulta deportiva. Explica el razonamiento en 'reasoning'."
+    ),
+    output_type=SportQuestionGuardrailOutput,
     model="gpt-4o"
 )
 
 @input_guardrail
-async def profanity_guardrail(ctx: RunContextWrapper[None], agent: Agent, user_input: str | list[TResponseInputItem]) -> GuardrailFunctionOutput:
+async def sport_guardrail(ctx: RunContextWrapper[None], agent: Agent, user_input: str | list[TResponseInputItem]) -> GuardrailFunctionOutput:
     """
-    Guardrail que utiliza un agente LLM para detectar lenguaje inapropiado.
-    Dispara un tripwire si se detecta contenido inapropiado.
+    Guardrail que solo permite preguntas deportivas. Dispara tripwire si NO es deportiva.
     """
-    result = await Runner.run(profanity_guardrail_agent, user_input, context=ctx.context)
+    result = await Runner.run(sport_guardrail_agent, user_input, context=ctx.context)
     return GuardrailFunctionOutput(
         output_info=result.final_output,
         tripwire_triggered=result.final_output.is_inappropriate
