@@ -25,4 +25,8 @@ build/
 backend/app/odoo_explorer.py
 body.json
 backend/scriptsodoo
+openai.md
+openai.md
 
+# Windsurf rules
+.windsurf/rules/openai.md

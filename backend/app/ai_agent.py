@@ -87,6 +87,12 @@ async def run_crm_agent(history_context: str) -> str:
     try:
         response = await runner.run(crm_agent, input=history_context)
         return response.final_output
+    except InputGuardrailTripwireTriggered:
+        # Respuesta personalizada cuando se detecta lenguaje inapropiado
+        return (
+            "Lo siento, tu mensaje contiene lenguaje inapropiado "
+            "y no puedo procesarlo. 🙏 Por favor, mantén un tono respetuoso."
+        )
     except Exception as e:
         return f"[Error AI]: {str(e)}"
 
@@ -130,6 +136,12 @@ async def run_internal_ops_agent(history_context: str) -> str:
     try:
         response = await runner.run(internal_ops_agent, input=history_context)
         return response.final_output
+    except InputGuardrailTripwireTriggered:
+        # Respuesta personalizada cuando se detecta lenguaje inapropiado
+        return (
+            "Lo siento, tu mensaje contiene lenguaje inapropiado "
+            "y no puedo procesarlo. 🙏 Por favor, mantén un tono respetuoso."
+        )
     except Exception as e:
         return f"[Error AI]: {str(e)}"
 
@@ -199,5 +211,11 @@ async def run_triage_agent(
             run_config=run_config
         )
         return response.final_output
+    except InputGuardrailTripwireTriggered:
+        # Respuesta personalizada cuando se detecta lenguaje inapropiado
+        return (
+            "Lo siento, tu mensaje contiene lenguaje inapropiado "
+            "y no puedo procesarlo. 🙏 Por favor, mantén un tono respetuoso."
+        )
     except Exception as e:
         return f"[Error AI]: {str(e)}"
