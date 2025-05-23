@@ -76,7 +76,7 @@ Nunca inventes información sobre productos que no existen en la tienda. Si no t
 """,
     model="gpt-4o",
     tools=[obtener_productos_odoo, obtener_inventario_odoo],
-    input_guardrails=[profanity_guardrail]
+    input_guardrails=[sport_guardrail]
 )
 
 
@@ -130,7 +130,7 @@ Eres un agente de gestión interna para una tienda de deportes acuáticos. Tu fu
         obtener_pedidos_compra_detallado_odoo,
         obtener_lineas_pedido_odoo
     ],
-    input_guardrails=[profanity_guardrail]
+    input_guardrails=[sport_guardrail]
 )
 
 async def run_internal_ops_agent(history_context: str) -> str:
