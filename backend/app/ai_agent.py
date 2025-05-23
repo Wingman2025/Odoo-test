@@ -19,31 +19,33 @@ api_key = os.getenv("OPENAI_API_KEY")
 # --- Crear cliente OpenAI ---
 openai_client = OpenAI(api_key=api_key)
 
-# --- Guardrail para lenguaje inapropiado ---
+# --- Guardrail para lenguaje inapropiado usando un agente guardrail (OpenAI Agents SDK) ---
+from pydantic import BaseModel
+from agents import Runner, RunContextWrapper, TResponseInputItem
+
+class ProfanityGuardrailOutput(BaseModel):
+    is_inappropriate: bool
+    reasoning: str
+
+profanity_guardrail_agent = Agent(
+    name="Profanity Guardrail Agent",
+    instructions="Detecta si el mensaje contiene lenguaje inapropiado, ofensivo o tóxico. Devuelve is_inappropriate=True si lo detectas y explica por qué en 'reasoning'.",
+    output_type=ProfanityGuardrailOutput,
+    model="gpt-4o"
+)
+
 @input_guardrail
-async def profanity_guardrail(ctx, agent: Agent, user_input: Union[str, List[Dict[str, Any]]]) -> GuardrailFunctionOutput:
+async def profanity_guardrail(ctx: RunContextWrapper[None], agent: Agent, user_input: str | list[TResponseInputItem]) -> GuardrailFunctionOutput:
     """
-    Guardrail que utiliza la Moderation API de OpenAI para detectar lenguaje inapropiado.
+    Guardrail que utiliza un agente LLM para detectar lenguaje inapropiado.
     Dispara un tripwire si se detecta contenido inapropiado.
     """
-    # Asegurarse de que user_input sea un string
-    if isinstance(user_input, list):
-        # Si es una lista de mensajes, tomar el último mensaje del usuario
-        user_message = next((
-            msg["content"] for msg in reversed(user_input) 
-            if isinstance(msg, dict) and msg.get("role") == "user"
-        ), "")
-    else:
-        user_message = str(user_input)
-    
-    # Llamada a la Moderation API
-    mod = await openai_client.moderations.create(input=user_message)
-    
-    # Si flagged es True, dispara el tripwire
+    result = await Runner.run(profanity_guardrail_agent, user_input, context=ctx.context)
     return GuardrailFunctionOutput(
-        output_info=mod.model_dump(),
-        tripwire_triggered=mod.results[0].flagged
+        output_info=result.final_output,
+        tripwire_triggered=result.final_output.is_inappropriate
     )
+
 
 # --- Definir el agente CRM, instrucciones consultivas y breves ---
 from .ai_agent_tools import (
