@@ -168,7 +168,8 @@ si las preguntas son comerciales, de ventas o atención al cliente, deriva al ag
 Si las preguntas son sobre stock, inventario, almacén o pedidos, deriva al agente "internal_ops_agent".
 """,
     handoffs=[internal_ops_agent, crm_agent],
-    model="gpt-4o"
+    model="gpt-4o",
+    input_guardrails=[sport_guardrail]
 )
 
 async def run_triage_agent(
