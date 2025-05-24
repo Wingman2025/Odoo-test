@@ -1,0 +1,22 @@
+
+    digraph G {
+        graph [splines=true];
+        node [fontname="Arial"];
+        edge [penwidth=1.5];
+    "__start__" [label="__start__", shape=ellipse, style=filled, fillcolor=lightblue, width=0.5, height=0.3];"__end__" [label="__end__", shape=ellipse, style=filled, fillcolor=lightblue, width=0.5, height=0.3];"triage_agent" [label="triage_agent", shape=box, style=filled, fillcolor=lightyellow, width=1.5, height=0.8];"internal_ops_agent" [label="internal_ops_agent", shape=box, style=filled, style=rounded, fillcolor=lightyellow, width=1.5, height=0.8];"__start__" [label="__start__", shape=ellipse, style=filled, fillcolor=lightblue, width=0.5, height=0.3];"__end__" [label="__end__", shape=ellipse, style=filled, fillcolor=lightblue, width=0.5, height=0.3];"internal_ops_agent" [label="internal_ops_agent", shape=box, style=filled, fillcolor=lightyellow, width=1.5, height=0.8];"obtener_productos_odoo" [label="obtener_productos_odoo", shape=ellipse, style=filled, fillcolor=lightgreen, width=0.5, height=0.3];"obtener_inventario_odoo" [label="obtener_inventario_odoo", shape=ellipse, style=filled, fillcolor=lightgreen, width=0.5, height=0.3];"obtener_pedidos_compra_odoo" [label="obtener_pedidos_compra_odoo", shape=ellipse, style=filled, fillcolor=lightgreen, width=0.5, height=0.3];"obtener_pedidos_compra_detallado_odoo" [label="obtener_pedidos_compra_detallado_odoo", shape=ellipse, style=filled, fillcolor=lightgreen, width=0.5, height=0.3];"obtener_lineas_pedido_odoo" [label="obtener_lineas_pedido_odoo", shape=ellipse, style=filled, fillcolor=lightgreen, width=0.5, height=0.3];"crm_agent" [label="crm_agent", shape=box, style=filled, style=rounded, fillcolor=lightyellow, width=1.5, height=0.8];"__start__" [label="__start__", shape=ellipse, style=filled, fillcolor=lightblue, width=0.5, height=0.3];"__end__" [label="__end__", shape=ellipse, style=filled, fillcolor=lightblue, width=0.5, height=0.3];"crm_agent" [label="crm_agent", shape=box, style=filled, fillcolor=lightyellow, width=1.5, height=0.8];"obtener_productos_odoo" [label="obtener_productos_odoo", shape=ellipse, style=filled, fillcolor=lightgreen, width=0.5, height=0.3];"obtener_inventario_odoo" [label="obtener_inventario_odoo", shape=ellipse, style=filled, fillcolor=lightgreen, width=0.5, height=0.3];"__start__" -> "triage_agent";
+            "triage_agent" -> "internal_ops_agent";
+        "internal_ops_agent" -> "obtener_productos_odoo" [style=dotted, penwidth=1.5];
+        "obtener_productos_odoo" -> "internal_ops_agent" [style=dotted, penwidth=1.5];
+        "internal_ops_agent" -> "obtener_inventario_odoo" [style=dotted, penwidth=1.5];
+        "obtener_inventario_odoo" -> "internal_ops_agent" [style=dotted, penwidth=1.5];
+        "internal_ops_agent" -> "obtener_pedidos_compra_odoo" [style=dotted, penwidth=1.5];
+        "obtener_pedidos_compra_odoo" -> "internal_ops_agent" [style=dotted, penwidth=1.5];
+        "internal_ops_agent" -> "obtener_pedidos_compra_detallado_odoo" [style=dotted, penwidth=1.5];
+        "obtener_pedidos_compra_detallado_odoo" -> "internal_ops_agent" [style=dotted, penwidth=1.5];
+        "internal_ops_agent" -> "obtener_lineas_pedido_odoo" [style=dotted, penwidth=1.5];
+        "obtener_lineas_pedido_odoo" -> "internal_ops_agent" [style=dotted, penwidth=1.5];"internal_ops_agent" -> "__end__";
+            "triage_agent" -> "crm_agent";
+        "crm_agent" -> "obtener_productos_odoo" [style=dotted, penwidth=1.5];
+        "obtener_productos_odoo" -> "crm_agent" [style=dotted, penwidth=1.5];
+        "crm_agent" -> "obtener_inventario_odoo" [style=dotted, penwidth=1.5];
+        "obtener_inventario_odoo" -> "crm_agent" [style=dotted, penwidth=1.5];"crm_agent" -> "__end__";}

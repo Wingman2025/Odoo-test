@@ -30,9 +30,10 @@ class SportQuestionGuardrailOutput(BaseModel):
 sport_guardrail_agent = Agent(
     name="Sport Question Guardrail Agent",
     instructions=(
-        "Valida si la pregunta o mensaje del usuario está relacionada con deportes acuáticos, "
-        "wingfoil, kitesurf, surf, paddle surf, material deportivo, o temas deportivos en general. "
-        "Devuelve is_inappropriate=True si NO es una consulta deportiva. Explica el razonamiento en 'reasoning'."
+        "Valida si el mensaje del usuario contiene lenguaje inapropiado, ofensivo o irrespetuoso. "
+        "Devuelve is_inappropriate=True solo si detectas lenguaje inapropiado. "
+        "En cualquier otro caso, incluyendo saludos o mensajes fuera de tema, permite el mensaje. "
+        "Explica el razonamiento en 'reasoning'."
     ),
     output_type=SportQuestionGuardrailOutput,
     model="gpt-4o"
@@ -43,6 +44,7 @@ async def sport_guardrail(ctx: RunContextWrapper[None], agent: Agent, user_input
     """
     Guardrail que solo permite preguntas deportivas. Dispara tripwire si NO es deportiva.
     """
+    # Solo bloquear lenguaje inapropiado, permitir todo lo demás
     result = await Runner.run(sport_guardrail_agent, user_input, context=ctx.context)
     return GuardrailFunctionOutput(
         output_info=result.final_output,
@@ -51,13 +53,22 @@ async def sport_guardrail(ctx: RunContextWrapper[None], agent: Agent, user_input
 
 
 # --- Definir el agente CRM, instrucciones consultivas y breves ---
-from .ai_agent_tools import (
-    obtener_productos_odoo,
-    obtener_inventario_odoo,
-    obtener_pedidos_compra_odoo,
-    obtener_pedidos_compra_detallado_odoo,
-    obtener_lineas_pedido_odoo
-)
+try:
+    from app.ai_agent_tools import (
+        obtener_productos_odoo,
+        obtener_inventario_odoo,
+        obtener_pedidos_compra_odoo,
+        obtener_pedidos_compra_detallado_odoo,
+        obtener_lineas_pedido_odoo
+    )
+except ModuleNotFoundError:
+    from ai_agent_tools import (
+        obtener_productos_odoo,
+        obtener_inventario_odoo,
+        obtener_pedidos_compra_odoo,
+        obtener_pedidos_compra_detallado_odoo,
+        obtener_lineas_pedido_odoo
+    )
 
 crm_agent = Agent(
     name="crm_agent",
@@ -167,6 +178,8 @@ Si las preguntas son sobre stock, inventario, almacén o pedidos, deriva al agen
     model="gpt-4o",
     input_guardrails=[sport_guardrail]
 )
+
+
 
 async def run_triage_agent(
     history_context: str,
